@@ -1,13 +1,20 @@
 ## Ben Eater 6502 kit (BE6502)
 
-- [ ] Download all [datasheets](6502/datasheets), [assemblies](6502/src), and [bin](6502/bin) files
+- [ ] Download all [schematics](6502/schematics), [datasheets](6502/datasheets), [assemblies](6502/src), and [bin](6502/bin) files
 - [ ] Video: [How a Computer Works - from silicon to apps](https://www.youtube.com/watch?v=5f3NJnvnk7k)
 - [ ] Video: [Power Supply](https://www.youtube.com/watch?v=HtFro0UKqkk&t=710s)
+- [ ] Print and review the [BE6502 (non-serial) schematic](6502/schematics/6502.png) for early assembly instructions
+- [ ] Print and read the [BE6502 CPU datasheet](6502/datasheets/w65c02s.pdf)
 - [ ] Video: [“Hello, world” from scratch on a 6502 — Part 1](https://www.youtube.com/watch?v=LnzuMJLZRdU)
+- [ ] Print and read the [BE6502 ROM datasheet](6502/datasheets/28c256.pdf)
+- [ ] Print and read the [BE6502 NAND gate datasheet](6502/datasheets/74hc00.pdf)
 - [ ] Video: [How do CPUs read machine code? — 6502 part 2](https://www.youtube.com/watch?v=yl8vPW5hydQ)
 - [ ] Video: [Assembly language vs. machine code — 6502 part 3](https://www.youtube.com/watch?v=oO8_2JJV0B4)
+- [ ] Print and read the [BE6502 LCD datasheet](6502/datasheets/HD44780.pdf)
+- [ ] Print and read the [BE6502 VIA IO datasheet](6502/datasheets/w65c22.pdf)
 - [ ] Video: [Connecting an LCD to our computer — 6502 part 4](https://www.youtube.com/watch?v=FY3zTUaykVo)
 - [ ] Video: [What is a stack and how does it work? — 6502 part 5](https://www.youtube.com/watch?v=xBjQVxVxOxc)
+- [ ] Print and read the [BE6502 RAM datasheet](6502/datasheets/hm62256b.pdf)
 - [ ] Video: [RAM and bus timing — 6502 part 6](https://www.youtube.com/watch?v=i_wrxBdXTgM)
 - [ ] Video: [Subroutine calls, now with RAM — 6502 part 7](https://www.youtube.com/watch?v=omI0MrTWiMU)
 - [ ] Video: [Why build an entire computer on breadboards? — 6502 part 8](https://www.youtube.com/watch?v=fCbAafKLqC8)
@@ -23,6 +30,7 @@
 - [ ] Video: [The RS-232 protocol](https://www.youtube.com/watch?v=AHYNxpqKqwo)
 - [ ] Video: [Let's build a voltage multiplier](https://www.youtube.com/watch?v=4alV5LzHLE4)
 - [ ] Video: [6502 serial interface](https://www.youtube.com/watch?v=oLYLnb7kpLg)
+- [ ] Print and read the [BE6502 UART datasheet](6502/datasheets/w65c51n.pdf)
 - [ ] Video: [RS232 interface with the 6551 UART](https://www.youtube.com/watch?v=zsERDRM1oy8)
 - [ ] Video: [Fixing a hardware bug in software (65C51 UART)](https://www.youtube.com/watch?v=CnA8nG3zYHw)
 - [ ] Video: [Running Apple 1 software on a breadboard computer (Wozmon)](https://www.youtube.com/watch?v=HlLCtjJzHVI)
