@@ -31,6 +31,7 @@
 - [ ] Video: [Let's build a voltage multiplier](https://www.youtube.com/watch?v=4alV5LzHLE4)
 - [ ] Video: [6502 serial interface](https://www.youtube.com/watch?v=oLYLnb7kpLg)
 - [ ] Print and read the [BE6502 UART datasheet](6502/datasheets/w65c51n.pdf)
+- [ ] Print and review the [BE6502 serial schematic](6502/schematics/6502-serial.png) for assembly instructions
 - [ ] Video: [RS232 interface with the 6551 UART](https://www.youtube.com/watch?v=zsERDRM1oy8)
 - [ ] Video: [Fixing a hardware bug in software (65C51 UART)](https://www.youtube.com/watch?v=CnA8nG3zYHw)
 - [ ] Video: [Running Apple 1 software on a breadboard computer (Wozmon)](https://www.youtube.com/watch?v=HlLCtjJzHVI)
