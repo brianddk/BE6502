@@ -4,3 +4,6 @@
 [submodule "depends/minipro"]
 	path = piControl/depends/minipro
 	url = https://gitlab.com/DavidGriffith/minipro.git
+[submodule "piControl/depends/wiringpi"]
+	path = piControl/depends/wiringpi
+	url = https://github.com/WiringPi/WiringPi-Python.git
