@@ -1,0 +1,6 @@
+[submodule "depends/vasm"]
+	path = piControl/depends/vasm
+	url = https://github.com/StarWolf3000/vasm-mirror.git
+[submodule "depends/minipro"]
+	path = piControl/depends/minipro
+	url = https://gitlab.com/DavidGriffith/minipro.git
