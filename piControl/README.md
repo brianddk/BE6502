@@ -5,3 +5,4 @@ Neither of my SoCs will monitor that many signals, but if I network them I can g
 The [Raspberry Pi 1 Model B (512)](rpi1_modb_rev2.md) has 17 GPIOs so it will produce the clock and monitor the 8 data pins.  
 The [ODROID C1+](odroid_c1.md) will monitor the address pins and RW pin.
 Both SoCs 
+
