@@ -1,1 +1,5 @@
 6502/src/rom.bin
+piControl/src/data.sec
+piControl/src/gpg_key.sec
+piControl/src/gpg_key.pub
+piControl/src/ssh_key.pub
