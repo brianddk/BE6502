@@ -5,7 +5,7 @@
 from sys import implementation
 assert hasattr(implementation, '_machine') and 'Pi Pico' in implementation._machine, "Must be run on Raspberry Pi Pico"
 
-from _thread, start_new_thread
+from _thread import start_new_thread
 from machine import UART, Pin
 
 UART0 = 0 # uart0 is the FIRST uart
