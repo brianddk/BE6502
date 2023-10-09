@@ -2,7 +2,7 @@
 # Video #01 from BE6502: https://youtu.be/playlist?list=PLowKtXNTBypFbtuVMUVXNR0z1mu7dp7eH
 # Serves as the Arduino and resistors https://youtu.be/LnzuMJLZRdU?t=1195
 
-# This PIO version of the Arduino debugger executes AFTER rising/falling edge.  May modify to run BEFORE falling/raising edge
+# This PIO version of the Arduino debugger.  If !RWB, data is accessed EXACTLY 40ns after rising edge
 
 # To learn PIO, good sections of study are:
 # 1. RP2040 Datasheet Ch3 - https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf#page=310
@@ -11,7 +11,7 @@
 # 4. Micropython `rp2` module - https://docs.micropython.org/en/latest/library/rp2.html
 
 from sys import implementation, exit
-assert hasattr(implementation, '_machine') and 'Pico' in implementation._machine, "Must be run on Raspberry Pi Pico"
+assert hasattr(implementation, '_machine') and 'Pi Pico' in implementation._machine, "Must be run on Raspberry Pi Pico"
 
 from machine import Pin, unique_id
 from time import sleep_us, ticks_us, ticks_diff, ticks_add
@@ -40,7 +40,7 @@ AN1 = [Pin(i) for i in [ 4,  5,  6,  7]]          # 7654
 AN2 = [Pin(i) for i in [ 8,  9, 10, 11]]          # BA98
 AN3 = [Pin(i) for i in [12, 13, 14, 15]] # reverse  CDEF
 DN1 = [Pin(i) for i in [16, 17, 18, 19]] # reverse  4567
-DN0 = [Pin(i) for i in [19, 20, 21, 22]] # rev_ovly 1234
+DN0 = [Pin(i) for i in [19, 20, 21, 22]] # reverse  1234 (overlay pin 19)
 DB0 = [Pin(i) for i in [26            ]]          #    0
 RWB = [Pin(i) for i in [27            ]]
 PHI = [Pin(i) for i in [28            ]]
@@ -62,6 +62,8 @@ PHI = [Pin(i) for i in [28            ]]
 # {D0} -> {GP26}
 # {RWB} -> {GP27}
 # {PHI2} -> {GP28}
+
+# Uses 8 of 8 state machines, 1 of 2 cores and 28 of 32 PIO inst.
 
 # Given a list of pins, set them as input with specific pull values
 def pull_pins(pins, pulls):
@@ -113,17 +115,19 @@ def pio_dn():
 
     wrap_target()                   # __ - "TOP:"
     label("top")                    # __ - "TOP:"
-    wait(HIGH, gpio, PHI)           # 04 - Wait for PHI high                                                             0.5    0.5
-    jmp(pin, "pico_write")          # 05 - RWB - Proc-R, Pico-W                                                          1.5    1.5
+    wait(HIGH, gpio, PHI)           # 04 - Wait for PHI high
+    jmp(pin, "pico_write")          # 05 - RWB - Proc-R, Pico-W
     label("pico_read")              # __ - !RWB - Proc-W, Pico-R
-    set(pindirs, INPUT)             # 06 - Set pico to read, could move _in here with nop stall                          2.5    set [1] 3.5
-    wait(LOW, gpio, PHI)            # 07 - Wait for PHI high                                                             0.5    nop [1] 5.5
-    in_(pins, NIBBLE)               # 08 - Shift data from pins, 8-16 ns after falling edge (too late?!?!) {bugcheck}    1.5    in / wait 6.5 ; 7 cycles
-    jmp("top")                      # 09 - JMP to top                                                                           ^^ would work for up to 8.9 MHz
+    set(pindirs, INPUT)             # 06 - Set pico to read, 
+    nop()                 .delay(1) # 07 - 5 to 6 inst after #04
+    nop()                 .delay(1) # 08 - 6 to 7 inst after #04 = 45-52ns / 6.05-7.39 MHz Max.
+    in_(pins, NIBBLE)               # 09 - Shift data from pins
+    wait(LOW, gpio, PHI)            # 10 - Wait for PHI high
+    jmp("top")                      # 11 - JMP to top
     label("pico_write")             # __ - RWB - Proc-R, Pico-W
-    set(pindirs, OUTPUT)            # 10 - Set pico to write
-    out(pins, NIBBLE)               # 11 - Shift data to pins, 23-30ns after rising edge
-    wait(LOW, gpio, PHI)            # 12 - Wait for PHI low
+    set(pindirs, OUTPUT)            # 12 - Set pico to write
+    out(pins, NIBBLE)               # 13 - Shift data to pins, 23-30ns after rising edge
+    wait(LOW, gpio, PHI)            # 14 - Wait for PHI low
     wrap()                          # __ - JMP to top
 
 # Create state machine for each data nibble to R/W.
@@ -142,17 +146,17 @@ def pio_db0():
 
     wrap_target()                   # __ - "TOP:"
     label("top")                    # __ - "TOP:"
-    wait(HIGH, gpio, PHI)           # 13 - Wait for PHI high
-    jmp(pin, "pico_write")          # 14 - RWB - Proc-R, Pico-W
+    wait(HIGH, gpio, PHI)           # 15 - Wait for PHI high
+    jmp(pin, "pico_write")          # 16 - RWB - Proc-R, Pico-W
     label("pico_read")              # __ - !RWB - Proc-W, Pico-R
-    set(pindirs, INPUT)             # 15 - Set pico to read
-    wait(LOW, gpio, PHI)            # 16 - Wait for PHI low
-    in_(pins, BIT)                  # 17 - Shift data from pins
-    jmp("top")                      # 18 - JMP to top
+    set(pindirs, INPUT)   .delay(4) # 17 - Set pico to read - 6 to 7 inst after #04 = 45-52ns / 6.05-7.39 MHz Max.
+    in_(pins, BIT)                  # 18 - Shift data from pins
+    wait(LOW, gpio, PHI)            # 19 - Wait for PHI low
+    jmp("top")                      # 20 - JMP to top
     label("pico_write")             # __ - RWB - Proc-R, Pico-W
-    set(pindirs, OUTPUT)            # 19 - Set pico to write
-    out(pins, BIT)                  # 20 - Shift data to pins
-    wait(LOW, gpio, PHI)            # 21 - Wait for PHI low
+    set(pindirs, OUTPUT)            # 21 - Set pico to write
+    out(pins, BIT)                  # 22 - Shift data to pins
+    wait(LOW, gpio, PHI)            # 23 - Wait for PHI low
     wrap()                          # __ - JMP to top
 
 # Create 1 bit data state machine
@@ -166,12 +170,12 @@ def pio_phi_rwb():
 
     wrap_target()                   # __ - "TOP:"
     label("phi_high")               # __ - "HIGH:" where we jmp when we set the clock high
-    pull()                          # 22 - Disable autopull so we can taste ISR
-    mov(x, osr)                     # 23 - Save a copy of OSR in to X
-    out(pins, BIT)                  # 24 - Shift PHI data to pins
-    jmp(x, "phi_high")              # 25 - If we transitioned low to High, don't shift RWB
+    pull()                          # 24 - Disable autopull so we can taste ISR
+    mov(x, osr)                     # 25 - Save a copy of OSR in to X
+    out(pins, BIT)                  # 26 - Shift PHI data to pins
+    jmp(x, "phi_high")              # 27 - If we transitioned low to High, don't shift RWB
     label("phi_low")                # __ -
-    in_(pins, BIT)                  # 26 - If we transitioned High to Low, read RWB and autopush OSR
+    in_(pins, BIT)                  # 28 - If we transitioned High to Low, read RWB and autopush OSR
     wrap()                          # __ - JMP to top
 
 # Create state machine RWB and PHI
